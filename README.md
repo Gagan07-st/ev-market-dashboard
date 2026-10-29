@@ -101,7 +101,7 @@ Python (pandas) for data preparation, HTML, CSS and JavaScript, Chart.js for cha
 
 ## Author
 
-**Your Name**, GitHub: [@your-username](https://github.com/your-username)
+**Your Name**, GitHub: https://github.com/Gagan07-st/ev-market-dashboard
 
 ## License
 
