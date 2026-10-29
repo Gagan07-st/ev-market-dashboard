@@ -2,8 +2,8 @@
 
 An interactive dashboard built from a 100,000-row EV market dataset. It shows sales, manufacturers, battery technology, range, pricing, charging, degradation and customer ratings, with filters for model year, market region, vehicle category and battery type.
 
-**Live demo:** https://your-project.vercel.app
-**Repository:** https://github.com/your-username/ev-market-dashboard
+**Live demo:** https://ev-market-dashboard-ten.vercel.app/
+**Repository:** https://github.com/Gagan07-st/ev-market-dashboard
 
 ---
 
