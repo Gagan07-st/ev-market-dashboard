@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EV Market Performance &amp; Insights</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f5;--panel:#fff;--ink:#10222f;--mute:#5c6f7c;--line:#d5dee5;--accent:#0a7c8c;--hot:#f0a202;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c171f;--panel:#13242f;--ink:#e6eef3;--mute:#8aa0ae;--line:#25394a;--accent:#2fc4d6;--hot:#ffc23d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c171f;--panel:#13242f;--ink:#e6eef3;--mute:#8aa0ae;--line:#25394a;--accent:#2fc4d6;--hot:#ffc23d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:800;margin:0 0 4px;letter-spacing:-.02em}
+h3{margin:22px 0 8px;font-size:1.05rem}
+.sub{color:var(--mute);margin:0 0 16px;max-width:75ch}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:14px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.bar label{display:flex;flex-direction:column;font-size:.78rem;color:var(--mute);gap:4px;font-weight:600}
+select,button{font:inherit;padding:7px 10px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-width:140px}
+button{cursor:pointer;min-width:0;font-weight:600}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;padding:10px 14px}
+.kpi:nth-child(even){border-left-color:var(--hot)}
+.kpi small{color:var(--mute);font-weight:600}
+.kpi b{display:block;font-size:1.45rem;font-weight:800;letter-spacing:-.02em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.card h2{font-size:.98rem;margin:0 0 2px;font-weight:700}
+.card p{margin:0 0 8px;color:var(--mute);font-size:.78rem}
+.c{position:relative;height:270px}.c.t{height:430px}
+.ins{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-top:14px}
+.ins h2{margin:0 0 6px;font-size:1rem}.ins ul{margin:0;padding-left:18px}.ins li{margin:4px 0}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{cursor:pointer;color:var(--mute);font-weight:600;user-select:none}
+.note{color:var(--mute);font-size:.8rem;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Electric vehicle market performance</h1>
+<p class="sub">100,000 EV models from 200 manufacturers, model years 2018–2026. Use the filters to explore sales, battery technology, range, pricing and customer satisfaction.</p>
+
+<div class="bar">
+<label>Model year<select id="f_year"></select></label>
+<label>Market region<select id="f_region"></select></label>
+<label>Vehicle category<select id="f_category"></select></label>
+<label>Battery type<select id="f_battery"></select></label>
+<button id="rs">Reset filters</button>
+</div>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="grid">
+<div class="card"><h2>Annual sales by model year</h2><p>Units sold</p><div class="c"><canvas id="c1"></canvas></div></div>
+<div class="card"><h2>Battery type share of sales</h2><p>Share of total units</p><div class="c"><canvas id="c4"></canvas></div></div>
+<div class="card"><h2>Battery adoption over time</h2><p>Share of models by battery type, all years</p><div class="c"><canvas id="c5"></canvas></div></div>
+<div class="card"><h2>Sales by market region</h2><p>Units sold</p><div class="c"><canvas id="c10"></canvas></div></div>
+<div class="card"><h2>Sales by vehicle category</h2><p>Units sold</p><div class="c t"><canvas id="c2"></canvas></div></div>
+<div class="card"><h2>Top 15 manufacturers by sales</h2><p>Responds to year and category filters</p><div class="c t"><canvas id="c3"></canvas></div></div>
+<div class="card"><h2>Average range by battery type</h2><p>Kilometres per charge</p><div class="c"><canvas id="c6"></canvas></div></div>
+<div class="card"><h2>Average range by vehicle category</h2><p>Kilometres per charge</p><div class="c t"><canvas id="c7"></canvas></div></div>
+<div class="card"><h2>Customer rating by vehicle category</h2><p>Average out of 5</p><div class="c t"><canvas id="c8"></canvas></div></div>
+<div class="card"><h2>Sales by manufacturing country</h2><p>Responds to year, category and battery filters</p><div class="c"><canvas id="c9"></canvas></div></div>
+<div class="card"><h2>5-year battery degradation</h2><p>Average % capacity lost, by battery type</p><div class="c"><canvas id="c11"></canvas></div></div>
+<div class="card"><h2>DC fast-charge time</h2><p>Average minutes, by battery type</p><div class="c"><canvas id="c12"></canvas></div></div>
+</div>
+
+<h3>Category scorecard</h3>
+<div class="tw"><table id="tbl"></table></div>
+
+<div class="ins"><h2>What the current view shows</h2><ul id="ins"></ul></div>
+<p class="note">Rows with a missing value are left out of that metric’s average; missing sales count as zero units. Averages are per model, sales are summed.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const DATA=__DATA__;
+const M=["n","sales","range_s","price_s","rat_s","rat_n","dc_s","deg_s","cyc_s","cyc_n","res_s","res_n","co2_s"];
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt=n=>n>=1e9?(n/1e9).toFixed(2)+"B":n>=1e6?(n/1e6).toFixed(2)+"M":n>=1e3?(n/1e3).toFixed(1)+"K":Math.round(n)+"";
+const PAL=["#0a7c8c","#f0a202","#d1495b","#4b6cb7","#6a994e","#8e5ea2","#e07a5f","#3d405b"];
+const FILTERS=["year","region","category","battery"];
+FILTERS.forEach(f=>{const el=$("f_"+f);el.innerHTML='<option value="">All</option>'+DATA.main.k[f].map(v=>`<option>${v}</option>`).join("")});
+
+function rows(c,skip){
+ const nd=c.d.length;
+ const sel=c.d.map(d=>{if(d===skip||!$("f_"+d))return -1;const v=$("f_"+d).value;return v===""?-1:c.k[d].indexOf(v)});
+ return c.r.filter(r=>sel.every((s,i)=>s<0||r[i]===s));
+}
+function grp(c,rs,dim){
+ const di=c.d.indexOf(dim),nd=c.d.length,o={};
+ rs.forEach(r=>{const a=o[r[di]]||(o[r[di]]=new Array(M.length).fill(0));for(let j=0;j<M.length;j++)a[j]+=r[nd+j]});
+ return Object.keys(o).map(k=>({k:c.k[dim][k],a:o[k]}));
+}
+const g=(a,m)=>a[M.indexOf(m)];
+const mean=(a,s,n)=>{const d=g(a,n);return d?g(a,s)/d:0};
+const rng=a=>mean(a,"range_s","n"),prc=a=>mean(a,"price_s","n"),rat=a=>mean(a,"rat_s","rat_n"),dc=a=>mean(a,"dc_s","n"),deg=a=>mean(a,"deg_s","n"),res=a=>mean(a,"res_s","res_n");
+const sales=a=>g(a,"sales");
+const tot=rs=>{const nd=DATA.main.d.length,a=new Array(M.length).fill(0);rs.forEach(r=>{for(let j=0;j<M.length;j++)a[j]+=r[nd+j]});return a};
+
+const charts={};
+function chart(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart($(id),cfg)}
+function axes(h,f){const ink=css("--mute"),ln=css("--line");return{x:{ticks:{color:ink},grid:{color:ln}},y:{ticks:{color:ink,callback:f},grid:{color:ln},beginAtZero:true}}}
+function bar(id,labels,data,o={}){
+ const ink=css("--mute"),f=o.f||fmt;
+ const sc=axes(o.h,v=>v);
+ sc.x.ticks.callback=undefined;sc.y.ticks.callback=undefined;
+ const val=o.h?"x":"y",cat=o.h?"y":"x";
+ sc[val].ticks={color:ink,callback:v=>f(v)};sc[val].beginAtZero=true;
+ if(o.min!=null)sc[val].min=o.min;
+ sc[cat].ticks={color:ink};
+ chart(id,{type:o.line?"line":"bar",data:{labels,datasets:[{data,backgroundColor:o.color||css("--accent"),borderColor:css("--accent"),borderWidth:o.line?3:0,tension:.3,pointRadius:o.line?4:0}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:o.h?"y":"x",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>" "+f(c.parsed[val])}}},scales:sc}});
+}
+function render(){
+ const A=DATA.main,R=rows(A),T=tot(R);
+ if(!R.length){$("kpis").innerHTML='<div class="kpi"><small>No data</small><b>No models match</b></div>';$("ins").innerHTML="<li>Try a different combination of filters, or reset them.</li>";return}
+ const byB=grp(A,R,"battery").sort((a,b)=>sales(b.a)-sales(a.a));
+ const byC=grp(A,R,"category").sort((a,b)=>sales(b.a)-sales(a.a));
+ const byR=grp(A,R,"region").sort((a,b)=>sales(b.a)-sales(a.a));
+ const byY=grp(A,rows(A,"year"),"year").sort((a,b)=>a.k-b.k);
+ const C=DATA.country,byCo=grp(C,rows(C),"country").sort((a,b)=>sales(b.a)-sales(a.a));
+ const Mf=DATA.mfr,byM=grp(Mf,rows(Mf),"mfr").sort((a,b)=>sales(b.a)-sales(a.a)).slice(0,15);
+ const ts=sales(T);
+ $("kpis").innerHTML=[["Models",fmt(g(T,"n"))],["Total sales",fmt(ts)+" units"],["Average range",Math.round(rng(T))+" km"],["Average price","$"+fmt(prc(T))],["Customer rating",rat(T).toFixed(2)+" / 5"],["DC fast charge",dc(T).toFixed(1)+" min"],["CO₂ saved",fmt(g(T,"co2_s"))+" t/yr"]].map(([a,b])=>`<div class="kpi"><small>${a}</small><b>${b}</b></div>`).join("");
+
+ bar("c1",byY.map(x=>x.k),byY.map(x=>sales(x.a)),{line:1});
+ bar("c2",byC.map(x=>x.k),byC.map(x=>sales(x.a)),{h:1});
+ bar("c3",byM.map(x=>x.k),byM.map(x=>sales(x.a)),{h:1,color:css("--hot")});
+ chart("c4",{type:"doughnut",data:{labels:byB.map(x=>x.k),datasets:[{data:byB.map(x=>sales(x.a)),backgroundColor:PAL,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"right",labels:{color:css("--mute"),boxWidth:12}},tooltip:{callbacks:{label:c=>" "+c.label+": "+(c.parsed/ts*100).toFixed(1)+"%"}}}}});
+ // adoption over time: share of models by battery within each year
+ const R2=rows(A,"year"),yrs=A.k.year,di=A.d.indexOf("year"),bi=A.d.indexOf("battery"),ni=A.d.length;
+ const ds=A.k.battery.map((b,i)=>({label:b,backgroundColor:PAL[i],data:yrs.map((y,yi)=>{let t=0,n=0;R2.forEach(r=>{if(r[di]===yi){t+=r[ni];if(r[bi]===i)n+=r[ni]}});return t?+(n/t*100).toFixed(1):0})}));
+ chart("c5",{type:"bar",data:{labels:yrs,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:css("--mute"),boxWidth:12}},tooltip:{callbacks:{label:c=>" "+c.dataset.label+": "+c.parsed.y+"%"}}},scales:{x:{stacked:true,ticks:{color:css("--mute")},grid:{display:false}},y:{stacked:true,max:100,ticks:{color:css("--mute"),callback:v=>v+"%"},grid:{color:css("--line")}}}}});
+ bar("c10",byR.map(x=>x.k),byR.map(x=>sales(x.a)));
+ const bo=[...byB].sort((a,b)=>rng(b.a)-rng(a.a));
+ bar("c6",bo.map(x=>x.k),bo.map(x=>Math.round(rng(x.a))),{f:v=>Math.round(v)+" km"});
+ const co=[...byC].sort((a,b)=>rng(b.a)-rng(a.a));
+ bar("c7",co.map(x=>x.k),co.map(x=>Math.round(rng(x.a))),{h:1,f:v=>Math.round(v)+" km"});
+ const qo=[...byC].sort((a,b)=>rat(b.a)-rat(a.a));
+ bar("c8",qo.map(x=>x.k),qo.map(x=>+rat(x.a).toFixed(2)),{h:1,color:css("--hot"),f:v=>(+v).toFixed(2),min:3});
+ bar("c9",byCo.map(x=>x.k),byCo.map(x=>sales(x.a)),{color:css("--hot")});
+ bar("c11",byB.map(x=>x.k),byB.map(x=>+deg(x.a).toFixed(1)),{f:v=>(+v).toFixed(1)+"%"});
+ bar("c12",byB.map(x=>x.k),byB.map(x=>+dc(x.a).toFixed(1)),{color:css("--hot"),f:v=>(+v).toFixed(1)+" min"});
+
+ // scorecard
+ const cols=[["Category",x=>x.k],["Models",x=>g(x.a,"n")],["Sales (units)",x=>sales(x.a)],["Avg price ($)",x=>prc(x.a)],["Avg range (km)",x=>rng(x.a)],["Rating",x=>rat(x.a)],["Resale 3yr (%)",x=>res(x.a)]];
+ window._tbl={cols,data:byC};drawTable();
+
+ const bs=byB[0],bq=qo[0],br=co[0],top3=byM.slice(0,3).reduce((t,x)=>t+sales(x.a),0);
+ $("ins").innerHTML=[
+  `${byC[0].k} is the biggest category with ${(sales(byC[0].a)/ts*100).toFixed(0)}% of unit sales; ${byR[0].k} is the largest market region.`,
+  `${bs.k} leads on sales (${(sales(bs.a)/ts*100).toFixed(0)}% of units), and ${byCo[0].k} is the top manufacturing country.`,
+  `${br.k} has the longest average range (${Math.round(rng(br.a))} km); ${bq.k} has the highest customer rating (${rat(bq.a).toFixed(2)}).`,
+  `The top three manufacturers in this view (${byM.slice(0,3).map(x=>x.k).join(", ")}) account for ${(top3/ts*100).toFixed(1)}% of all units, so the market is highly fragmented across 200 brands.`,
+  `${[...byB].sort((a,b)=>deg(a.a)-deg(b.a))[0].k} batteries degrade the least over five years (${deg([...byB].sort((a,b)=>deg(a.a)-deg(b.a))[0].a).toFixed(1)}% average).`
+ ].map(t=>`<li>${t}</li>`).join("");
+}
+let sortI=2,sortD=-1;
+function drawTable(){
+ const {cols,data}=window._tbl,f=[x=>x,fmt,fmt,v=>"$"+fmt(v),v=>Math.round(v),v=>v.toFixed(2),v=>v.toFixed(1)];
+ const rs=[...data].sort((a,b)=>{const x=cols[sortI][1](a),y=cols[sortI][1](b);return (x>y?1:x<y?-1:0)*sortD});
+ $("tbl").innerHTML="<thead><tr>"+cols.map((c,i)=>`<th data-i="${i}">${c[0]}${i===sortI?(sortD<0?" ▾":" ▴"):""}</th>`).join("")+"</tr></thead><tbody>"+rs.map(r=>"<tr>"+cols.map((c,i)=>`<td>${f[i](c[1](r))}</td>`).join("")+"</tr>").join("")+"</tbody>";
+ $("tbl").querySelectorAll("th").forEach(th=>th.onclick=()=>{const i=+th.dataset.i;sortD=i===sortI?-sortD:(i===0?1:-1);sortI=i;drawTable()});
+}
+FILTERS.forEach(f=>$("f_"+f).addEventListener("change",render));
+$("rs").addEventListener("click",()=>{FILTERS.forEach(f=>$("f_"+f).value="");render()});
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render);
+render();
+</script>
+</body>
+</html>
